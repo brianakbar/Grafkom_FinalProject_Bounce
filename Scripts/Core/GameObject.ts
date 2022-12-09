@@ -12,15 +12,9 @@ export class GameObject {
     //Private Fields
     private components = new Array<Component>();
 
-    protected setup() {
-        this.draw();
-        EventManager.getSystem().subscribe("Update", this.update);
-        EventManager.getSystem().subscribe("Update", this.updateBody);
-    }
-
-    protected draw() {}
-    
     //Events
+    protected awake = () => {}
+    protected start = () => {}
     protected update = () => {}
     private updateBody = () => {
         if(!this.mesh) return;
@@ -34,11 +28,19 @@ export class GameObject {
     }
 
     //Public Methods
-    public getMesh() {
+    public setup() {
+        this.create();
+        EventManager.getSystem().subscribe("Awake", this.awake);
+        EventManager.getSystem().subscribe("Start", this.start);
+        EventManager.getSystem().subscribe("Update", this.update);
+        EventManager.getSystem().subscribe("Update", this.updateBody);
+    }
+
+    public getRenderObject() {
         return this.mesh;
     }
 
-    public getRigidBody() {
+    public getPhysicBody() {
         return this.rigidBody;
     }
 
@@ -46,8 +48,23 @@ export class GameObject {
         return this.transform;
     }
 
+    public getComponent<T extends Component>(componentToCheck: new () => T): T | null {
+        let componentToReturn: T | null = null;
+        this.components.forEach((component) => {
+            if(component.constructor.name === componentToCheck.name) {
+                componentToReturn = component as T;
+            }  
+        });
+        if(componentToReturn) { return componentToReturn; }
+        else { return null; }
+    }
+
     public addComponent(component : Component) {
-        component.setGameObject(this);
+        component.setup(this);
         this.components.push(component);
     }
+
+    //Protected Methods
+    protected draw() {}
+    protected create() {}
 }

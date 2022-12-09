@@ -1,0 +1,1 @@
+export { PlayerController } from './Controller/PlayerController';

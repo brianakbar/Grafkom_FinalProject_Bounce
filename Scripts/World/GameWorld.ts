@@ -1,6 +1,6 @@
 import * as CANNON from 'cannon-es';
 import * as THREE from 'three';
-import { GameObject, EventManager } from '../Core';
+import { GameObject, EventManager, Time } from '../Core';
 
 import * as CONTROL from 'three/examples/jsm/controls/OrbitControls';
 
@@ -9,15 +9,17 @@ export class GameWorld {
     private camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 1, 1000);
     private renderWorld = new THREE.Scene();
     private physicWorld = new CANNON.World({
-        gravity: new CANNON.Vec3(0, -9.82, 0)
+        gravity: new CANNON.Vec3(0, -20, 0)
     });
     private renderer = new THREE.WebGLRenderer();
 
+    private lastTime: number = 0;
+
     control : CONTROL.OrbitControls;
 
-    constructor() {
+    constructor(gameObjects: Array<GameObject>) {
         this.camera.position.z = 25;
-        this.initScene();
+        this.initRenderWorld();
         this.initPhysicWorld();
         this.initRenderer();
         document.body.appendChild(this.renderer.domElement);
@@ -25,24 +27,37 @@ export class GameWorld {
         this.control = new CONTROL.OrbitControls(this.camera, this.renderer.domElement);
         this.control.update();
 
-        EventManager.getSystem().subscribe("Update", this.update);
+        gameObjects.forEach((gameObject) => {
+            this.add(gameObject);
+        });
+
+        EventManager.getSystem().notify("Awake");
+        EventManager.getSystem().notify("Start");
+        requestAnimationFrame(this.update);
     }
 
-    //Event
-    private update = () => {
+    //Events
+    private update = (now: number) => {
+        requestAnimationFrame(this.update);
+
+        Time.deltaTime = (now - this.lastTime)/1000;
+        this.lastTime = now;
+
         this.control.update();
         this.physicWorld.fixedStep();
         this.renderer.render(this.renderWorld, this.camera);
+        EventManager.getSystem().notify("Update");
     }
 
-    //Public Method
+    //Public Methods
     public add(gameObject: GameObject) {
-        this.renderWorld.add(gameObject.getMesh());
-        this.physicWorld.addBody(gameObject.getRigidBody());
+        gameObject.setup();
+        this.renderWorld.add(gameObject.getRenderObject());
+        this.physicWorld.addBody(gameObject.getPhysicBody());
     }
 
-    //Private Method
-    private initScene() {
+    //Private Methods
+    private initRenderWorld() {
         this.renderWorld.fog = new THREE.Fog(0x000000, 500, 10000);
 
         const axesHelper = new THREE.AxesHelper( 5 );
@@ -50,7 +65,7 @@ export class GameWorld {
     }
 
     private initPhysicWorld() {
-        this.physicWorld.defaultContactMaterial.restitution = 0.8;
+        this.physicWorld.defaultContactMaterial.restitution = 0.5;
     }
 
     private initRenderer() {

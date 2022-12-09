@@ -6,9 +6,8 @@ import { GameObject } from "../Core";
 export class FloorPrefab extends GameObject {
     protected name = "FloorPrefab";
 
-    constructor() {
-        super();
-        this.setup();
+    protected create() {
+        this.draw();
     }
 
     protected draw() {
