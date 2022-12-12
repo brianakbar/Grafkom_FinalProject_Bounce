@@ -5,27 +5,22 @@ export class Component {
     private gameObject = new GameObject();
 
     //Events
-    protected awake = () => {}
-    protected start = () => {}
-    protected update = () => {}
+    protected onAwake = () => {}
+    protected onStart = () => {}
+    protected onUpdate = () => {}
 
     //Public Methods
     public setup(gameObject: GameObject) {
         this.gameObject = gameObject;
-        EventManager.getSystem().subscribe("Awake", this.awake);
-        EventManager.getSystem().subscribe("Start", this.start);
-        EventManager.getSystem().subscribe("Update", this.update);
+        EventManager.getSystem().subscribe("Awake", this.onAwake);
+        EventManager.getSystem().subscribe("Start", this.onStart);
+        EventManager.getSystem().subscribe("Update", this.onUpdate);
     }
 
     public getComponent<T extends Component>(componentToCheck: new () => T): T | null {
         return this.gameObject.getComponent<T>(componentToCheck);
     }
 
-    public getRenderObject() {
-        return this.gameObject.getRenderObject();
-    }
-
-    public getPhysicBody() {
-        return this.gameObject.getPhysicBody();
-    }
+    public serialize(): object | null { return null; }
+    public deserialize(serializer: object)  {}
 }

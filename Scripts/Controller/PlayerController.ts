@@ -10,13 +10,13 @@ let spaceBarPressed: Boolean = false;
 export class PlayerController extends Component {
     private mover!: Mover | null;
 
-    protected awake = () => {
+    protected onAwake = () => {
         document.addEventListener('keydown', this.onKeyDown, false);
         document.addEventListener('keyup', this.onKeyUp, false);
         this.mover = this.getComponent(Mover);
     }
 
-    protected update = () => {
+    protected onUpdate = () => {
         if(this.mover == null) return;
 
         if(upPressed) { this.mover.startMove(MoveDirection.Forward); }
@@ -32,7 +32,7 @@ export class PlayerController extends Component {
             spaceBarPressed = false;
         }
     }
-
+      
     private onKeyDown(event: KeyboardEvent) {
         if(event.key == "w") { upPressed = true; }
         else if(event.key == "s") { downPressed = true; }

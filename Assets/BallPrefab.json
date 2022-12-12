@@ -1,0 +1,25 @@
+[
+    {
+        "SphereMesh": {
+            "radius": 3
+        }
+    },
+    {
+        "RigidBody": {
+            "mass": 20,
+            "x": 0,
+            "y": 1,
+            "z": 0,
+            "bodyType": "DYNAMIC"
+        }
+    },
+    {
+        "Mover": {
+            "acceleration": 20,
+            "deceleration": 2,
+            "maxSpeed": 20,
+            "rotateSpeed": 90,
+            "jumpForce": 20
+        }
+    }
+]

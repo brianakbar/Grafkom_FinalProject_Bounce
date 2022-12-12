@@ -1,6 +1,6 @@
 import * as CANNON from "cannon-es";
-import { clamp, lerp } from "three/src/math/MathUtils";
-import { Component, Time } from "../Core";
+import { clamp } from "three/src/math/MathUtils";
+import { Component, RigidBody, Time } from "../Core";
 import { MoveDirection, RotateDirection } from "../Movement";
 
 export class Mover extends Component {
@@ -17,13 +17,13 @@ export class Mover extends Component {
     private rotateDirection: RotateDirection = RotateDirection.None;
 
     //Caches
-    private rigidBody!: CANNON.Body;
+    private rigidBodyComponent: RigidBody | null = null;
 
-    protected awake = () => {
-        this.rigidBody = this.getPhysicBody();
+    protected onAwake = () => {
+        this.rigidBodyComponent = this.getComponent(RigidBody);
     }
 
-    protected update = () => {
+    protected onUpdate = () => {
         this.move();
         this.rotate();
     }
@@ -45,10 +45,18 @@ export class Mover extends Component {
     }
 
     public jump() {
-        this.rigidBody.velocity.y = this.jumpForce;
+        if(!this.rigidBodyComponent) return;
+        var rigidBody = this.rigidBodyComponent.getRigidBody();
+        if(!rigidBody) return;
+
+        rigidBody.velocity.y = this.jumpForce;
     }
 
     private move() {
+        if(!this.rigidBodyComponent) return;
+        var rigidBody = this.rigidBodyComponent.getRigidBody();
+        if(!rigidBody) return;
+
         if(this.moveDirection == MoveDirection.Forward) {
             this.currentSpeed = clamp(this.currentSpeed + (this.acceleration * Time.deltaTime), 
                                         this.currentSpeed, this.maxSpeed);
@@ -67,13 +75,38 @@ export class Mover extends Component {
         }
         var localCurrentSpeedZ = this.currentSpeed * Math.sin(this.angle);
         var localCurrentSpeedX = this.currentSpeed * Math.cos(this.angle);
-        this.rigidBody.velocity.z = localCurrentSpeedZ;
-        this.rigidBody.velocity.x = localCurrentSpeedX;
+        rigidBody.velocity.z = localCurrentSpeedZ;
+        rigidBody.velocity.x = localCurrentSpeedX;
     }
 
     private rotate() {
         this.angle += this.rotateDirection * Math.PI/180 * 
                     Math.abs(this.currentSpeed / this.maxSpeed) *
                     this.rotateSpeed * Time.deltaTime;
+    }
+
+    //Serialization
+    public serialize(): object | null {
+        return this.toObject();
+    }
+
+    public deserialize(serialized: object)  {
+        const state = serialized as ReturnType<Mover["toObject"]>;
+    
+        this.acceleration = state.acceleration;
+        this.deceleration = state.deceleration;
+        this.maxSpeed = state.maxSpeed;
+        this.rotateSpeed = state.rotateSpeed;
+        this.jumpForce = state.jumpForce;
+    }
+
+    private toObject() {
+        return {
+            acceleration: this.acceleration,
+            deceleration: this.deceleration,
+            maxSpeed: this.maxSpeed,
+            rotateSpeed: this.rotateSpeed,
+            jumpForce: this.jumpForce
+        }
     }
 }
