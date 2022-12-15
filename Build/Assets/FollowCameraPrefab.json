@@ -1,0 +1,31 @@
+[
+    {
+        "GameObject": {
+            "name": "FollowCameraPrefab",
+            "tag": "MainCamera",
+            "prefab": "FollowCameraPrefab"
+        }
+    },
+    {
+        "Transform": {
+            "position": {
+                "x": 0,
+                "y": 0,
+                "z": 120
+            },
+            "quaternion": {
+                "x": 0,
+                "y": 0,
+                "z": 0,
+                "w": 0
+            }
+        }
+    },
+    {
+        "PerspectiveCamera": {
+            "fieldOfView": 75,
+            "near": 1,
+            "far": 1000
+        }
+    }
+]

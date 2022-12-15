@@ -9,11 +9,11 @@ export class BoxMesh extends Mesh {
 
     //Private Fields
     private geometry: THREE.BoxGeometry | null = null;
-    private material: THREE.MeshBasicMaterial | null = null;
+    private material: THREE.MeshStandardMaterial | null = null;
 
     protected onAwake = () => {
         this.geometry = new THREE.BoxGeometry(this.width, this.height, this.depth);
-        this.material = new THREE.MeshBasicMaterial({color: 0x964B00});
+        this.material = new THREE.MeshStandardMaterial({color: 0x964B00});
         this.mesh = new THREE.Mesh(this.geometry, this.material);
     }
 

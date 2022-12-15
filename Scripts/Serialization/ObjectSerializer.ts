@@ -20,20 +20,24 @@ export class ObjectSerializer {
         document.body.removeChild(element);
     }
 
-    public static readTextFile(file: string, callback: (text: string | null) => void) {
-        var rawFile = new XMLHttpRequest();
-        rawFile.overrideMimeType("application/json");
-        rawFile.open("GET", file, true);
-        rawFile.onerror = function() {
-            if(rawFile.status == 404) {
+    public static readTextFile(urlToFile: string, callback: (text: string | null) => void) {
+        fetch(urlToFile, {
+            method: "GET",
+            mode: "no-cors"
+        })
+        .then(function(response) {
+            if (response.status == 200) {
+                return response.text();
+            } else {
+                console.log(urlToFile + " doesn't exist!");
                 callback(null);
             }
-        }
-        rawFile.onreadystatechange = function() {
-            if (rawFile.readyState === 4 && rawFile.status == 200) {
-                callback(rawFile.responseText);
-            }
-        }
-        rawFile.send(null);
+        })
+        .then((data) => {
+            if(data) callback(data);
+        })
+        .catch(function(error) {
+            console.log("Error ", error);
+        });
     }
 }

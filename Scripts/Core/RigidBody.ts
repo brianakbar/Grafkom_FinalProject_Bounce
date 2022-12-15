@@ -1,14 +1,10 @@
 import * as CANNON from 'cannon-es';
-import { BodyType } from 'cannon-es';
 import * as CONVERT from "three-to-cannon";
-import { Component, Mesh } from "../Core";
+import { Component, Mesh, Position, Quaternion } from "../Core";
 
 export class RigidBody extends Component {
     //Editable Fields
     private mass: number = 0;
-    private x: number = 0;
-    private y: number = 0;
-    private z: number = 0;
     private bodyType: string = "DYNAMIC";
 
     private rigidBody: CANNON.Body | null = null;
@@ -19,7 +15,7 @@ export class RigidBody extends Component {
     }
 
     protected onStart = () => {
-        let mesh = this.meshComponent?.getMesh();
+        let mesh = this.meshComponent?.getObject();
         if(!mesh) return;
 
         let cannonBodyType: CANNON.BodyType = CANNON.Body.DYNAMIC;
@@ -34,20 +30,37 @@ export class RigidBody extends Component {
             position: convertResult?.offset,
             quaternion: convertResult?.orientation,
         })
-
-        this.rigidBody.position.set(this.x, this.y, this.z);
     }
 
-    protected onUpdate = () => {
-        if(!this.rigidBody) return;
-        this.meshComponent?.setPosition(this.rigidBody.position.x, 
-                                        this.rigidBody.position.y, 
-                                        this.rigidBody.position.z);
-        this.meshComponent?.setQuaternion(this.rigidBody.quaternion.x,
-                                            this.rigidBody.quaternion.y,
-                                            this.rigidBody.quaternion.z,
-                                            this.rigidBody.quaternion.w);
+    public setPosition(position: Position) {
+        this.rigidBody?.position.set(position.x, position.y, position.z);
     }
+
+    public setQuaternion(quaternion: Quaternion) {
+        this.rigidBody?.quaternion.set(quaternion.x, quaternion.y, quaternion.z, quaternion.w);
+    }
+
+    public getPosition() {
+        if(!this.rigidBody) return null;
+
+        let position: Position = new Position();
+        position.x = this.rigidBody.position.x;
+        position.y = this.rigidBody.position.y;
+        position.z = this.rigidBody.position.z;
+        return position;
+    }
+
+    public getQuaternion() {
+        if(!this.rigidBody) return null;
+
+        let quaternion: Quaternion = new Quaternion();
+        quaternion.x = this.rigidBody.quaternion.x;
+        quaternion.y = this.rigidBody.quaternion.y;
+        quaternion.z = this.rigidBody.quaternion.z;
+        quaternion.w = this.rigidBody.quaternion.w;
+        return quaternion;
+    }
+
 
     public getRigidBody() {
         return this.rigidBody;
@@ -62,18 +75,12 @@ export class RigidBody extends Component {
         const state = serialized as ReturnType<RigidBody["toObject"]>;
     
         this.mass = state.mass;
-        this.x = state.x;
-        this.y = state.y;
-        this.z = state.z;
         this.bodyType = state.bodyType;
     }
 
     private toObject() {
         return {
             mass: this.mass,
-            x: this.x,
-            y: this.y,
-            z: this.z,
             bodyType: this.bodyType
         }
     }

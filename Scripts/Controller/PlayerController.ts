@@ -19,13 +19,13 @@ export class PlayerController extends Component {
     protected onUpdate = () => {
         if(this.mover == null) return;
 
-        if(upPressed) { this.mover.startMove(MoveDirection.Forward); }
-        else if(downPressed) { this.mover.startMove(MoveDirection.Backward); }
+        if(rightPressed) { this.mover.startMove(MoveDirection.Forward); }
+        else if(leftPressed) { this.mover.startMove(MoveDirection.Backward); }
         else { this.mover.stopMove(); }
 
-        if(rightPressed) { this.mover.startRotate(RotateDirection.Right); }
-        else if(leftPressed) { this.mover.startRotate(RotateDirection.Left); }
-        else { this.mover.stopRotate(); }
+        //if(rightPressed) { this.mover.startRotate(RotateDirection.Right); }
+        //else if(leftPressed) { this.mover.startRotate(RotateDirection.Left); }
+        //else { this.mover.stopRotate(); }
 
         if(spaceBarPressed) { 
             this.mover.jump() 

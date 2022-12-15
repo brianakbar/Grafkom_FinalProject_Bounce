@@ -73,10 +73,10 @@ export class Mover extends Component {
             this.currentSpeed = clamp(this.currentSpeed + (this.deceleration * Time.deltaTime), 
                                         this.currentSpeed, 0);
         }
-        var localCurrentSpeedZ = this.currentSpeed * Math.sin(this.angle);
-        var localCurrentSpeedX = this.currentSpeed * Math.cos(this.angle);
-        rigidBody.velocity.z = localCurrentSpeedZ;
-        rigidBody.velocity.x = localCurrentSpeedX;
+        //var localCurrentSpeedZ = this.currentSpeed * Math.sin(this.angle);
+        //var localCurrentSpeedX = this.currentSpeed * Math.cos(this.angle);
+        //rigidBody.velocity.z = localCurrentSpeedZ;
+        rigidBody.velocity.x = this.currentSpeed;
     }
 
     private rotate() {

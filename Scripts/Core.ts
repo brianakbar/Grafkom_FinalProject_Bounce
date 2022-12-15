@@ -1,7 +1,10 @@
 export { Component } from './Core/Component';
 export { EventManager } from './Core/EventManager';
-export { GameObject } from './Core/GameObject';
+export { GameObject, pair } from './Core/GameObject';
+export { RenderableObject } from './Core/RenderableObject';
 export { Mesh } from './Core/Mesh';
+export { Position } from './Core/Position';
+export { Quaternion } from './Core/Quaternion';
 export { RigidBody } from './Core/Rigidbody';
 export { SphereMesh } from './Core/SphereMesh';
 export { BoxMesh } from './Core/BoxMesh';

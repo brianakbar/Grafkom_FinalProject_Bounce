@@ -1,17 +1,17 @@
-import { Component } from "../Core";
+import { Position, Quaternion, RenderableObject } from "../Core";
 
-export class Mesh extends Component {
+export class Mesh extends RenderableObject {
     protected mesh: THREE.Mesh | null = null;
 
-    public getMesh() {
+    public getObject() {
         return this.mesh;
     }
 
-    public setPosition(x: number, y: number, z: number) {
-        this.mesh?.position.set(x, y, z);
+    public setPosition(position: Position) {
+        this.mesh?.position.set(position.x, position.y, position.z);
     }
 
-    public setQuaternion(x: number, y: number, z: number, w: number) {
-        this.mesh?.quaternion.set(x, y, z, w);
+    public setQuaternion(quaternion: Quaternion) {
+        this.mesh?.quaternion.set(quaternion.x, quaternion.y, quaternion.z, quaternion.w);
     }
 }

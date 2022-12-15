@@ -7,11 +7,11 @@ export class SphereMesh extends Mesh {
 
     //Private Fields
     private geometry: THREE.SphereGeometry | null = null;
-    private material: THREE.MeshBasicMaterial | null = null;
+    private material: THREE.MeshStandardMaterial | null = null;
 
     protected onAwake = () => {
         this.geometry = new THREE.SphereGeometry(this.radius);
-        this.material = new THREE.MeshBasicMaterial({color: 0xD10000});
+        this.material = new THREE.MeshStandardMaterial({color: 0xD10000});
         this.mesh = new THREE.Mesh(this.geometry, this.material);
     }
 
