@@ -1,11 +1,11 @@
 import * as THREE from 'three';
-import { RenderableObject } from "../Core";
+import { Position, RenderableObject } from "../Core";
 
 export class PerspectiveCamera extends RenderableObject {
     //Editable Fields
-    private fieldOfView: number = 50;
-    private near: number = 0.1;
-    private far: number = 2000;
+    private fieldOfView: number = 75;
+    private near: number = 1;
+    private far: number = 1000;
 
     //Caches
     private camera: THREE.PerspectiveCamera | null = null;
@@ -14,15 +14,18 @@ export class PerspectiveCamera extends RenderableObject {
         this.camera = new THREE.PerspectiveCamera(this.fieldOfView, 
                                                 window.innerWidth / window.innerHeight, 
                                                 this.near, this.far);
-        this.camera.position.z = 25;
-    }
-
-    public getObject(): THREE.Object3D<THREE.Event> | null {
-        return this.camera;
+        this.object = this.camera;
+        //this.camera.position.z = 100;
     }
 
     public getCamera(): THREE.Camera | null {
         return this.camera;
+    }
+
+    public lookAt(position: Position) {
+        if(!this.object) return;
+        
+        this.object.lookAt(position.x, position.y, position.z);
     }
 
     //Serialization

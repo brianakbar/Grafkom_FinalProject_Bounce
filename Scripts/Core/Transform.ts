@@ -24,7 +24,9 @@ export class Transform extends Component {
         }
 
         this.updateTransform();
-        this.synchronizeTransform();
+        if(this.rigidBody) {
+            this.synchronizeTransform();
+        }
     }
 
     public setPosition(x: number, y: number, z: number) {
@@ -40,6 +42,14 @@ export class Transform extends Component {
         this.quaternion.z = z;
         this.quaternion.w = w;
         this.synchronizeTransform();
+    }
+
+    public getPosition() {
+        return this.position;
+    }
+
+    public getQuaternion() {
+        return this.quaternion;
     }
 
     private updateTransform() {

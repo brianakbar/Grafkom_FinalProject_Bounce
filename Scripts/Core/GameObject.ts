@@ -21,15 +21,13 @@ export class GameObject {
     }
 
     public static findWithTag(tag: string): GameObject | null {
+        var gameObjectToReturn: GameObject | null = null;
         this.gameObjects.forEach((gameObject) => {
-            var exp = gameObject.tag == tag;
-            console.log(gameObject.name + " " + gameObject.tag + " " + tag + " " + exp);
             if(gameObject.tag == tag) {
-                console.log("Berhasil!");
-                return gameObject;
+                gameObjectToReturn = gameObject;
             }
         })
-        return null;
+        return gameObjectToReturn;
     }
 
     public getComponent<T extends Component>(componentToCheck: new () => T): T | null {

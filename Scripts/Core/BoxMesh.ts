@@ -14,7 +14,7 @@ export class BoxMesh extends Mesh {
     protected onAwake = () => {
         this.geometry = new THREE.BoxGeometry(this.width, this.height, this.depth);
         this.material = new THREE.MeshStandardMaterial({color: 0x964B00});
-        this.mesh = new THREE.Mesh(this.geometry, this.material);
+        this.object = new THREE.Mesh(this.geometry, this.material);
     }
 
     //Serialization

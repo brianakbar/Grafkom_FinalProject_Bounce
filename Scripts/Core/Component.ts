@@ -8,6 +8,7 @@ export class Component {
     protected onAwake = () => {}
     protected onStart = () => {}
     protected onUpdate = () => {}
+    protected onLateUpdate = () => {}
 
     //Public Methods
     public setup(gameObject: GameObject) {
@@ -15,6 +16,7 @@ export class Component {
         EventManager.getSystem().subscribe("Awake", this.onAwake);
         EventManager.getSystem().subscribe("Start", this.onStart);
         EventManager.getSystem().subscribe("Update", this.onUpdate);
+        EventManager.getSystem().subscribe("LateUpdate", this.onLateUpdate);
     }
 
     public getComponent<T extends Component>(componentToCheck: new () => T): T | null {

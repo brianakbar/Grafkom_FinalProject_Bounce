@@ -12,7 +12,7 @@ export class SphereMesh extends Mesh {
     protected onAwake = () => {
         this.geometry = new THREE.SphereGeometry(this.radius);
         this.material = new THREE.MeshStandardMaterial({color: 0xD10000});
-        this.mesh = new THREE.Mesh(this.geometry, this.material);
+        this.object = new THREE.Mesh(this.geometry, this.material);
     }
 
     //Serialization

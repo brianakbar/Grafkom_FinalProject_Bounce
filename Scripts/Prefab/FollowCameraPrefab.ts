@@ -1,4 +1,4 @@
-import { PerspectiveCamera } from "../Camera";
+import { FollowCamera, PerspectiveCamera } from "../Camera";
 import { GameObject } from "../Core";
 
 export class FollowCameraPrefab extends GameObject {
@@ -7,5 +7,6 @@ export class FollowCameraPrefab extends GameObject {
 
     protected addComponents() {
         this.addComponent(new PerspectiveCamera);
+        this.addComponent(new FollowCamera);
     }
 }

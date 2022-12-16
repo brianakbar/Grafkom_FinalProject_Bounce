@@ -4,6 +4,7 @@ type Event = {
     Awake: () => void;
     Start: () => void;
     Update: () => void;
+    LateUpdate: () => void;
 }
 
 export class EventManager {

@@ -6,15 +6,8 @@ export class AmbientLight extends RenderableObject {
     private color: number = 0x404040;
     private intensity: number = 1;
 
-    //Caches
-    private light: THREE.AmbientLight | null = null;
-
     protected onAwake = () => {
-        this.light = new THREE.AmbientLight(this.color, this.intensity);
-    }
-
-    public getObject(): THREE.Object3D<THREE.Event> | null {
-        return this.light;
+        this.object = new THREE.AmbientLight(this.color, this.intensity);
     }
 
     //Serialization

@@ -8,7 +8,7 @@ let rightPressed: Boolean = false;
 let spaceBarPressed: Boolean = false;
 
 export class PlayerController extends Component {
-    private mover!: Mover | null;
+    private mover: Mover | null = null;
 
     protected onAwake = () => {
         document.addEventListener('keydown', this.onKeyDown, false);
