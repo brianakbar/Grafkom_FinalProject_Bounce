@@ -1,1 +1,42 @@
-[{"GameObject":{"name":"FloorPrefab","tag":"","prefab":"FloorPrefab"}},{"Transform":{"position":{"x":0,"y":-5,"z":0},"quaternion":{"x":0,"y":0,"z":0,"w":1}}},{"BoxMesh":{"width":50,"height":5,"depth":50}},{"RigidBody":{"mass":0,"bodyType":"STATIC"}}]
+[
+    {
+        "GameObject": {
+            "name": "FloorPrefab",
+            "tag": "",
+            "prefab": "FloorPrefab"
+        }
+    },
+    {
+        "Transform": {
+            "position": {
+                "x": 0,
+                "y": -5,
+                "z": 0
+            },
+            "scale": {
+                "x": 1,
+                "y": 1,
+                "z": 1
+            },
+            "quaternion": {
+                "x": 0,
+                "y": 0,
+                "z": 0,
+                "w": 1
+            }
+        }
+    },
+    {
+        "BoxMesh": {
+            "width": 50,
+            "height": 5,
+            "depth": 50
+        }
+    },
+    {
+        "RigidBody": {
+            "mass": 0,
+            "bodyType": "STATIC"
+        }
+    }
+]

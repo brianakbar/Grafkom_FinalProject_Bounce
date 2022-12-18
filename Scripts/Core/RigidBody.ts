@@ -1,13 +1,14 @@
 import * as CANNON from 'cannon-es';
 import * as CONVERT from "three-to-cannon";
-import { Component, Mesh, Position, Quaternion } from "../Core";
+import { Component, Mesh, Position, Quaternion, Scale } from "../Core";
 
 export class RigidBody extends Component {
     //Editable Fields
     private mass: number = 0;
-    private bodyType: string = "DYNAMIC";
+    private bodyType: string = "STATIC";
 
     private rigidBody: CANNON.Body | null = null;
+    private shape: CANNON.Shape | null = null;
     private meshComponent: Mesh | null = null;
 
     protected onAwake = () => {
@@ -18,22 +19,46 @@ export class RigidBody extends Component {
         let mesh = this.meshComponent?.getObject();
         if(!mesh) return;
 
-        let cannonBodyType: CANNON.BodyType = CANNON.Body.DYNAMIC;
-        if(this.bodyType === "STATIC") cannonBodyType = CANNON.Body.STATIC;
-        else if(this.bodyType === "KINEMATIC") cannonBodyType = CANNON.Body.KINEMATIC;
-
+        let cannonBodyType: CANNON.BodyType = this.getBodyType();
         let convertResult = CONVERT.threeToCannon(mesh);
+
+        if(convertResult?.shape) this.shape = convertResult?.shape;
+        if(!this.shape) return;
+
         this.rigidBody = new CANNON.Body({
             mass: this.mass,
             type: cannonBodyType,
-            shape: convertResult?.shape,
+            shape: this.shape,
             position: convertResult?.offset,
             quaternion: convertResult?.orientation,
         })
     }
 
+    private getBodyType() {
+        let cannonBodyType: CANNON.BodyType = CANNON.Body.DYNAMIC;
+        if (this.bodyType === "STATIC")
+            cannonBodyType = CANNON.Body.STATIC;
+        else if (this.bodyType === "KINEMATIC")
+            cannonBodyType = CANNON.Body.KINEMATIC;
+        return cannonBodyType;
+    }
+
     public setPosition(position: Position) {
         this.rigidBody?.position.set(position.x, position.y, position.z);
+    }
+
+    public updateShape() {
+        let mesh = this.meshComponent?.getObject();
+        if(!mesh) return;
+        if(!this.shape) return;
+
+        this.rigidBody?.removeShape(this.shape);
+        let convertResult = CONVERT.threeToCannon(mesh);
+
+        if(convertResult?.shape) this.shape = convertResult?.shape;
+        if(!this.shape) return;
+
+        this.rigidBody?.addShape(this.shape);
     }
 
     public setQuaternion(quaternion: Quaternion) {

@@ -1,8 +1,9 @@
-import { Component, Position, Quaternion, RenderableObject, RigidBody } from '../Core';
+import { Component, Position, Quaternion, RenderableObject, RigidBody, Scale } from '../Core';
 
 export class Transform extends Component {
     //Editable Fields
     private position: Position = new Position();
+    private scale: Scale = new Scale();
     private quaternion: Quaternion = new Quaternion();
 
     //Private Fields
@@ -20,6 +21,10 @@ export class Transform extends Component {
     protected onUpdate = () => {
         if(this.isFirstSynchronize) {
             this.synchronizeTransform();
+            if(this.rigidBody) {
+                if(this.renderableObject) this.renderableObject.setScale(this.scale);
+                this.rigidBody.updateShape()
+            };
             this.isFirstSynchronize = false;
         }
 
@@ -33,7 +38,17 @@ export class Transform extends Component {
         this.position.x = x;
         this.position.y = y;
         this.position.z = z;
-        this.synchronizeTransform();
+        if(this.isEnabled) this.synchronizeTransform();
+    }
+
+    public setScale(x: number, y: number, z: number) {
+        this.scale.x = x;
+        this.scale.y = y;
+        this.scale.z = z;
+        if(this.isEnabled) {
+            if(this.renderableObject) this.renderableObject.setScale(this.scale);
+            if(this.rigidBody) this.rigidBody.updateShape();
+        }
     }
 
     public setQuaternion(x: number, y: number, z: number, w: number) {
@@ -41,11 +56,15 @@ export class Transform extends Component {
         this.quaternion.y = y;
         this.quaternion.z = z;
         this.quaternion.w = w;
-        this.synchronizeTransform();
+        if(this.isEnabled) this.synchronizeTransform();
     }
 
     public getPosition() {
         return this.position;
+    }
+
+    public getScale() {
+        return this.scale;
     }
 
     public getQuaternion() {
@@ -59,16 +78,20 @@ export class Transform extends Component {
             var newQuaternion = this.rigidBody.getQuaternion();
             if(newQuaternion) this.quaternion = newQuaternion;
         }
+        if(this.renderableObject) {
+            var newScale = this.renderableObject.getScale();
+            if(newScale) this.scale = newScale;
+        }
     }
 
     private synchronizeTransform() {
-        if(this.rigidBody) {
-            this.rigidBody.setPosition(this.position);
-            this.rigidBody.setQuaternion(this.quaternion);
-        }
         if(this.renderableObject) {
             this.renderableObject.setPosition(this.position);
             this.renderableObject.setQuaternion(this.quaternion);
+        }
+        if(this.rigidBody) {
+            this.rigidBody.setPosition(this.position);
+            this.rigidBody.setQuaternion(this.quaternion);
         }
     }
 
@@ -81,12 +104,14 @@ export class Transform extends Component {
         const state = serialized as ReturnType<Transform["toObject"]>;
     
         if(state.position) this.position.deserialize(state.position);
+        if(state.scale) this.scale.deserialize(state.scale);
         if(state.quaternion) this.quaternion.deserialize(state.quaternion);
     }
 
     private toObject() {
         return {
             position: this.position.serialize(),
+            scale: this.scale.serialize(),
             quaternion: this.quaternion.serialize()
         }
     }

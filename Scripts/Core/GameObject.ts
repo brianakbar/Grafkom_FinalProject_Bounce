@@ -1,10 +1,17 @@
+import EventSystem from 'events-system';
 import { Component, Transform } from '../Core';
+
+type Event = {
+    OnDestroy: (gameObject: GameObject) => void;
+}
 
 export interface pair {
     [key: string]: object
 }
 
 export class GameObject {
+    public static event : EventSystem<Event> = new EventSystem<Event>();
+    
     //Protected Fields
     protected name = "GameObject";
     protected tag = "";
@@ -48,6 +55,22 @@ export class GameObject {
     public addComponent(component : Component) {
         component.setup(this);
         this.components.push(component);
+    }
+
+    public getTag() {
+        return this.tag;
+    }
+
+    public disable() {
+        this.components.forEach((component) => {
+            component.disable();
+        })
+    }
+
+    public static destroy(gameObject: GameObject) {
+        var index = GameObject.gameObjects.indexOf(gameObject);
+        GameObject.gameObjects.splice(index, 1);
+        GameObject.event.notify("OnDestroy", gameObject);
     }
 
     //Serialization

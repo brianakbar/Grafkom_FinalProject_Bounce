@@ -1,3 +1,4 @@
+export { Scale } from './Core/Scale';
 export { Component } from './Core/Component';
 export { EventManager } from './Core/EventManager';
 export { GameObject, pair } from './Core/GameObject';

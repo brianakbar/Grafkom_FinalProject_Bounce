@@ -1,22 +1,22 @@
 [
     {
         "GameObject": {
-            "name": "FollowCameraPrefab",
-            "tag": "MainCamera",
-            "prefab": "FollowCameraPrefab"
+            "name": "DirectionalLightPrefab",
+            "tag": "",
+            "prefab": "DirectionalLightPrefab"
         }
     },
     {
         "Transform": {
             "position": {
                 "x": 0,
-                "y": 30,
-                "z": 50
+                "y": 0,
+                "z": 0
             },
             "scale": {
-                "x": 1,
-                "y": 1,
-                "z": 1
+                "x": 0,
+                "y": 0,
+                "z": 0
             },
             "quaternion": {
                 "x": 0,
@@ -27,10 +27,9 @@
         }
     },
     {
-        "PerspectiveCamera": {
-            "fieldOfView": 75,
-            "near": 1,
-            "far": 1000
+        "DirectionalLight": {
+            "color": 16777215,
+            "intensity": 1
         }
     }
 ]

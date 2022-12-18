@@ -20,28 +20,33 @@ export class GameWorld {
     private renderer = new THREE.WebGLRenderer();
 
     private lastTime: number = 0;
-    private instances: Array<string | GameObject>;
+    private instanceLength: number = 0;
     private gameObjects: Array<GameObject> = new Array<GameObject>();
     private loadedGameObjects: number = 0;
 
-    //control : CONTROL.OrbitControls | null = null;
-
-    constructor(gameObjectsToInstantiate: Array<string | GameObject>) {
-        this.instances = gameObjectsToInstantiate;
+    constructor(gameObjectsToInstantiate: Array<string | GameObject> | string) {
+        if(typeof gameObjectsToInstantiate != "string") {
+            this.instanceLength = gameObjectsToInstantiate.length;
+        }
 
         this.initRenderWorld();
         this.initPhysicWorld();
         this.initRenderer();
         document.body.appendChild(this.renderer.domElement);
 
-        gameObjectsToInstantiate.forEach((gameObject) => {
-            if(typeof gameObject == "string") {
-                this.addFromJSON(gameObject);
-            }
-            else {
-                this.add(gameObject);
-            }
-        });
+        if(typeof gameObjectsToInstantiate == "string") {
+            this.deserialize(gameObjectsToInstantiate);
+        }
+        else {
+            gameObjectsToInstantiate.forEach((gameObject) => {
+                if(typeof gameObject == "string") {
+                    this.addFromJSON(gameObject);
+                }
+                else {
+                    this.add(gameObject);
+                }
+            });
+        }
 
         document.addEventListener('keydown', this.onKeyDown, false);
     }
@@ -53,19 +58,24 @@ export class GameWorld {
         Time.deltaTime = (now - this.lastTime)/1000;
         this.lastTime = now;
 
-        //if(this.control) { this.control.update() };
         this.physicWorld.fixedStep();
 
         var cameraObject = this.camera?.getCamera();
         if(cameraObject) { this.renderer.render(this.renderWorld, cameraObject); }
 
         if(savePressed) {
+            let i: number = 0;
+            let gameObjectPaths: Array<String> = new Array<String>();
+
             GameObject.gameObjects.forEach((gameObject) => {
                 let objectToSerialize = gameObject.serialize();
                 if(objectToSerialize == null) return;
 
-                ObjectSerializer.download(gameObject.constructor.name + '.json', ObjectSerializer.serialize(objectToSerialize));
+                var fileName = ++i + '.json';
+                ObjectSerializer.download(fileName, ObjectSerializer.serialize(objectToSerialize));
+                gameObjectPaths.push("Assets/GameObject/" + fileName);
             })
+            ObjectSerializer.download("World.json", ObjectSerializer.serialize(gameObjectPaths));
             savePressed = false;
         }
 
@@ -85,9 +95,6 @@ export class GameWorld {
     //Private Methods
     private initRenderWorld() {
         this.renderWorld.fog = new THREE.Fog(0x000000, 500, 10000);
-
-        const axesHelper = new THREE.AxesHelper( 5 );
-        this.renderWorld.add( axesHelper );
     }
 
     private initPhysicWorld() {
@@ -103,17 +110,12 @@ export class GameWorld {
     }
 
     private initEvents() {
-        if(this.loadedGameObjects < this.instances.length) return;
+        if(this.loadedGameObjects < this.instanceLength) return;
 
         EventManager.getSystem().notify("Awake");
         EventManager.getSystem().notify("Start");
 
         this.camera = GameObject.findWithTag("MainCamera")?.getComponent(PerspectiveCamera);
-        //var cameraObject = this.camera?.getCamera();
-        //if(cameraObject) {
-            //this.control = new CONTROL.OrbitControls(cameraObject, this.renderer.domElement);
-            //this.control.update();
-        //}
 
         requestAnimationFrame(this.update);
 
@@ -150,5 +152,17 @@ export class GameWorld {
     private onKeyDown(event: KeyboardEvent) {
         if(event.key == "t") { savePressed = true; }
         else if(event.key == "l") { loadPressed = true; }
+    }
+
+    private deserialize(worldPath: string) {
+        ObjectSerializer.readTextFile(worldPath, (text: string | null) => {
+            if(text) { 
+                const paths = ObjectSerializer.deserialize(text) as Array<string>;
+                this.instanceLength = paths.length;
+                paths.forEach((path) => {
+                    this.addFromJSON(path);
+                })
+            }
+        });
     }
 }

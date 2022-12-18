@@ -1,16 +1,16 @@
 [
     {
         "GameObject": {
-            "name": "FloorPrefab",
-            "tag": "",
-            "prefab": "FloorPrefab"
+            "name": "BallPrefab",
+            "tag": "Player",
+            "prefab": "BallPrefab"
         }
     },
     {
         "Transform": {
             "position": {
                 "x": 0,
-                "y": -5,
+                "y": 0.49995696863912814,
                 "z": 0
             },
             "scale": {
@@ -27,16 +27,23 @@
         }
     },
     {
-        "BoxMesh": {
-            "width": 50,
-            "height": 5,
-            "depth": 50
+        "SphereMesh": {
+            "radius": 3
         }
     },
     {
         "RigidBody": {
-            "mass": 0,
-            "bodyType": "STATIC"
+            "mass": 20,
+            "bodyType": "DYNAMIC"
+        }
+    },
+    {
+        "Mover": {
+            "acceleration": 30,
+            "deceleration": 3,
+            "maxSpeed": 25,
+            "rotateSpeed": 90,
+            "jumpForce": 20
         }
     }
 ]
