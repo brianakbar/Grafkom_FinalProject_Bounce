@@ -7,7 +7,5 @@ export { Mesh } from './Core/Mesh';
 export { Position } from './Core/Position';
 export { Quaternion } from './Core/Quaternion';
 export { RigidBody } from './Core/Rigidbody';
-export { SphereMesh } from './Core/SphereMesh';
-export { BoxMesh } from './Core/BoxMesh';
 export { Time } from './Core/Time';
 export { Transform } from './Core/Transform';

@@ -1,6 +1,7 @@
-import { GameObject, RigidBody, SphereMesh } from "../Core";
+import { GameObject, RigidBody } from "../Core";
 import { PlayerController } from "../Controller";
 import { Mover } from "../Movement";
+import { SphereMesh } from "../Mesh";
 
 export class BallPrefab extends GameObject {
     protected name = "BallPrefab";

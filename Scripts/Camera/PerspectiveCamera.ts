@@ -5,7 +5,7 @@ export class PerspectiveCamera extends RenderableObject {
     //Editable Fields
     private fieldOfView: number = 75;
     private near: number = 1;
-    private far: number = 1000;
+    private far: number = 30000;
 
     //Caches
     private camera: THREE.PerspectiveCamera | null = null;

@@ -1,14 +1,11 @@
 import * as CANNON from 'cannon-es';
 import * as THREE from 'three';
-import { GameObject, EventManager, Time, RigidBody, RenderableObject } from '../Core';
+import { GameObject, EventManager, Time, RigidBody, RenderableObject, pair } from '../Core';
 import { ObjectSerializer } from '../Serialization';
 import { PerspectiveCamera } from '../Camera';
 
-import * as CONTROL from 'three/examples/jsm/controls/OrbitControls';
 import { PrefabInstantiator } from '../Prefab';
-
-let savePressed: Boolean = false;
-let loadPressed: Boolean = false;
+import { Skybox } from '../World';
 
 export class GameWorld {
     //Private Fields
@@ -18,6 +15,7 @@ export class GameWorld {
         gravity: new CANNON.Vec3(0, -20, 0)
     });
     private renderer = new THREE.WebGLRenderer();
+    private skyBox: Skybox = new Skybox();
 
     private lastTime: number = 0;
     private instanceLength: number = 0;
@@ -47,8 +45,6 @@ export class GameWorld {
                 }
             });
         }
-
-        document.addEventListener('keydown', this.onKeyDown, false);
     }
 
     //Events
@@ -62,31 +58,6 @@ export class GameWorld {
 
         var cameraObject = this.camera?.getCamera();
         if(cameraObject) { this.renderer.render(this.renderWorld, cameraObject); }
-
-        if(savePressed) {
-            let i: number = 0;
-            let gameObjectPaths: Array<String> = new Array<String>();
-
-            GameObject.gameObjects.forEach((gameObject) => {
-                let objectToSerialize = gameObject.serialize();
-                if(objectToSerialize == null) return;
-
-                var fileName = ++i + '.json';
-                ObjectSerializer.download(fileName, ObjectSerializer.serialize(objectToSerialize));
-                gameObjectPaths.push("Assets/GameObject/" + fileName);
-            })
-            ObjectSerializer.download("World.json", ObjectSerializer.serialize(gameObjectPaths));
-            savePressed = false;
-        }
-
-        if(loadPressed) {
-            GameObject.gameObjects.forEach((gameObject) => {
-                ObjectSerializer.readTextFile("Assets/" + gameObject.constructor.name + ".json", (text: string | null) => {
-                    if(text) { gameObject.deserialize(ObjectSerializer.deserialize(text)); }
-                });
-            })
-            loadPressed = false;
-        }
 
         EventManager.getSystem().notify("Update");
         EventManager.getSystem().notify("LateUpdate");
@@ -149,20 +120,28 @@ export class GameWorld {
         if(gameObjectRigidBody) {this.physicWorld.addBody(gameObjectRigidBody); }
     }
 
-    private onKeyDown(event: KeyboardEvent) {
-        if(event.key == "t") { savePressed = true; }
-        else if(event.key == "l") { loadPressed = true; }
-    }
-
     private deserialize(worldPath: string) {
         ObjectSerializer.readTextFile(worldPath, (text: string | null) => {
-            if(text) { 
-                const paths = ObjectSerializer.deserialize(text) as Array<string>;
-                this.instanceLength = paths.length;
-                paths.forEach((path) => {
-                    this.addFromJSON(path);
+            if(!text) return;
+
+            let worldStates = ObjectSerializer.deserialize(text) as Array<pair>;
+            worldStates.forEach((state) => {
+                Object.keys(state).forEach((key) => {
+                    if(key == "Skybox") {
+                        const skyBoxState = state[key] as ReturnType<Skybox["toObject"]>;
+                        this.skyBox.deserialize(skyBoxState);
+                        var skyboxObject = this.skyBox.getSkybox();
+                        if(skyboxObject) this.renderWorld.add(skyboxObject);
+                    }
+                    else {
+                        const paths = state[key] as Array<string>;
+                        this.instanceLength = paths.length;
+                        paths.forEach((path) => {
+                            this.addFromJSON(path);
+                        })
+                    }
                 })
-            }
+            })
         });
     }
 }

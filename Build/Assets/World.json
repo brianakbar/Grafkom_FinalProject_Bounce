@@ -1,1 +1,21 @@
-["Assets/GameObject/1.json","Assets/GameObject/2.json","Assets/GameObject/3.json","Assets/GameObject/4.json","Assets/GameObject/5.json","Assets/GameObject/6.json","Assets/GameObject/7.json","Assets/GameObject/8.json","Assets/GameObject/9.json"]
+[
+    {
+        "Skybox": {
+            "skyboxFilePath": "Assets/Skybox/corona",
+            "side": 10000
+        }
+    },
+    {
+        "Instances": [
+            "Assets/GameObject/1.json",
+            "Assets/GameObject/2.json",
+            "Assets/GameObject/3.json",
+            "Assets/GameObject/4.json",
+            "Assets/GameObject/5.json",
+            "Assets/GameObject/6.json",
+            "Assets/GameObject/7.json",
+            "Assets/GameObject/8.json",
+            "Assets/GameObject/9.json"
+        ]
+    }
+]

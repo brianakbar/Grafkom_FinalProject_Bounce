@@ -1,17 +1,18 @@
 import * as THREE from 'three';
 import * as CONVERT from "three-to-cannon";
-import { GameObject, EventManager, Time, RenderableObject, Transform } from '../Core';
+import { GameObject, EventManager, Time, RenderableObject, Transform, pair } from '../Core';
 import { ObjectSerializer } from '../Serialization';
 
 import * as ORBITCONTROL from 'three/examples/jsm/controls/OrbitControls';
 import * as TRANSFORMCONTROL from 'three/examples/jsm/controls/TransformControls';
 import { PrefabInstantiator } from '../Prefab';
+import { Skybox } from '../World';
 
 let savePressed: Boolean = false;
 let loadPressed: Boolean = false;
 
 let raycaster: THREE.Raycaster = new THREE.Raycaster();
-let camera = new THREE.PerspectiveCamera( 75, window.innerWidth / window.innerHeight, 1, 1000 );
+let camera = new THREE.PerspectiveCamera( 75, window.innerWidth / window.innerHeight, 1, 30000 );
 let renderer = new THREE.WebGLRenderer();
 let transformControl : TRANSFORMCONTROL.TransformControls = new TRANSFORMCONTROL.TransformControls(camera, renderer.domElement);
 let orbitControl : ORBITCONTROL.OrbitControls | null = null;
@@ -22,6 +23,7 @@ export class GameEditor {
     //Private Fields
     private lastTime: number = 0;
     private instanceLength: number = 0;
+    private skyBox: Skybox = new Skybox();
 
     private static loadedGameObjects: number = 0;
     private static isFirstEvent: Boolean = true;
@@ -49,13 +51,11 @@ export class GameEditor {
         this.lastTime = now;
 
         if(orbitControl) { orbitControl.update() };
-
-        //var cameraObject = this.cameraGame?.getCamera();
-        //if(cameraObject) { this.renderer.render(this.renderWorld, cameraObject); }
         renderer.render(renderWorld, camera);
 
         if(savePressed) {
             let i: number = 0;
+            let worldMap = new Array<pair>();
             let gameObjectPaths: Array<String> = new Array<String>();
 
             GameObject.gameObjects.forEach((gameObject) => {
@@ -66,7 +66,9 @@ export class GameEditor {
                 ObjectSerializer.download(fileName, ObjectSerializer.serialize(objectToSerialize));
                 gameObjectPaths.push("Assets/GameObject/" + fileName);
             })
-            ObjectSerializer.download("World.json", ObjectSerializer.serialize(gameObjectPaths));
+            worldMap.push({["Skybox"]: this.skyBox.serialize()});
+            worldMap.push({["Instances"]: gameObjectPaths});
+            ObjectSerializer.download("World.json", ObjectSerializer.serialize(worldMap));
             savePressed = false;
         }
 
@@ -94,10 +96,6 @@ export class GameEditor {
             var renderableObject = gameObject.getComponent(RenderableObject);
             if(!transform) return;
             if(!renderableObject) return;
-
-            var obj = renderableObject.getObject();
-            let convertResult;
-            if(obj) convertResult = CONVERT.threeToCannon(obj);
 
             var newPos = renderableObject.getPosition();
             if(newPos) transform.setPosition(newPos.x, newPos.y, newPos.z);
@@ -200,13 +198,26 @@ export class GameEditor {
 
     private deserialize(worldPath: string) {
         ObjectSerializer.readTextFile(worldPath, (text: string | null) => {
-            if(text) { 
-                const paths = ObjectSerializer.deserialize(text) as Array<string>;
-                this.instanceLength = paths.length;
-                paths.forEach((path) => {
-                    this.addFromJSON(path);
+            if(!text) return;
+
+            let worldStates = ObjectSerializer.deserialize(text) as Array<pair>;
+            worldStates.forEach((state) => {
+                Object.keys(state).forEach((key) => {
+                    if(key == "Skybox") {
+                        const skyBoxState = state[key] as ReturnType<Skybox["toObject"]>;
+                        this.skyBox.deserialize(skyBoxState);
+                        var skyboxObject = this.skyBox.getSkybox();
+                        if(skyboxObject) renderWorld.add(skyboxObject);
+                    }
+                    else {
+                        const paths = state[key] as Array<string>;
+                        this.instanceLength = paths.length;
+                        paths.forEach((path) => {
+                            this.addFromJSON(path);
+                        })
+                    }
                 })
-            }
+            })
         });
     }
 
