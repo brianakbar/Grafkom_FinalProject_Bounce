@@ -2,6 +2,7 @@
   "dependencies": {
     "cannon-es": "^0.20.0",
     "events-system": "^0.0.9",
+    "jszip": "^3.10.1",
     "three": "^0.147.0",
     "three-to-cannon": "^4.3.0"
   },

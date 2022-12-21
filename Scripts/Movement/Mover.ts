@@ -76,6 +76,7 @@ export class Mover extends Component {
         //var localCurrentSpeedZ = this.currentSpeed * Math.sin(this.angle);
         //var localCurrentSpeedX = this.currentSpeed * Math.cos(this.angle);
         //rigidBody.velocity.z = localCurrentSpeedZ;
+        rigidBody.position.z = 0;
         rigidBody.velocity.x = this.currentSpeed;
     }
 

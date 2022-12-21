@@ -1,0 +1,44 @@
+[
+    {
+        "GameObject": {
+            "name": "CylinderPrefab",
+            "tag": "",
+            "prefab": "CylinderPrefab"
+        }
+    },
+    {
+        "Transform": {
+            "position": {
+                "x": 19.643840840356773,
+                "y": -11.941586209373042,
+                "z": 0
+            },
+            "scale": {
+                "x": 1,
+                "y": 1,
+                "z": 1
+            },
+            "quaternion": {
+                "x": -0.01778367174603063,
+                "y": 0,
+                "z": 0,
+                "w": 0.9998418580051696
+            }
+        }
+    },
+    {
+        "CylinderMesh": {
+            "radiusTop": 4,
+            "radiusBottom": 4,
+            "height": 12,
+            "radialSegments": 8,
+            "heightSegments": 1
+        }
+    },
+    {
+        "RigidBody": {
+            "mass": 0,
+            "bodyType": "STATIC"
+        }
+    }
+]

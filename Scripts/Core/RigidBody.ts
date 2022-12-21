@@ -56,9 +56,8 @@ export class RigidBody extends Component {
         let convertResult = CONVERT.threeToCannon(mesh);
 
         if(convertResult?.shape) this.shape = convertResult?.shape;
-        if(!this.shape) return;
 
-        this.rigidBody?.addShape(this.shape);
+        if(this.shape) this.rigidBody?.addShape(this.shape);
     }
 
     public setQuaternion(quaternion: Quaternion) {

@@ -57,18 +57,21 @@ export class GameEditor {
             let i: number = 0;
             let worldMap = new Array<pair>();
             let gameObjectPaths: Array<String> = new Array<String>();
+            let zipMap = new Map<string, string>();
 
             GameObject.gameObjects.forEach((gameObject) => {
                 let objectToSerialize = gameObject.serialize();
                 if(objectToSerialize == null) return;
 
                 var fileName = ++i + '.json';
-                ObjectSerializer.download(fileName, ObjectSerializer.serialize(objectToSerialize));
+                zipMap.set(fileName, ObjectSerializer.serialize(objectToSerialize));
+                //ObjectSerializer.download(, );
                 gameObjectPaths.push("Assets/GameObject/" + fileName);
             })
             worldMap.push({["Skybox"]: this.skyBox.serialize()});
             worldMap.push({["Instances"]: gameObjectPaths});
-            ObjectSerializer.download("World.json", ObjectSerializer.serialize(worldMap));
+            zipMap.set("World.json", ObjectSerializer.serialize(worldMap));
+            ObjectSerializer.download("data.zip", zipMap);
             savePressed = false;
         }
 

@@ -3,10 +3,6 @@ import * as PREFAB from "../Prefab"
 import { ObjectSerializer } from "../Serialization";
 
 export class PrefabInstantiator {
-    /*public static createInstance(gameObject: GameObject): GameObject | null {
-        var createdGameObject: GameObject = new gameObject
-    }*/
-
     public static setupInstance(gameObject: GameObject) {
         gameObject.setup();
     }
@@ -20,6 +16,9 @@ export class PrefabInstantiator {
                 break;
             case "BallPrefab":
                 createdGameObject = new PREFAB.BallPrefab;
+                break;
+            case "CylinderPrefab":
+                createdGameObject = new PREFAB.CylinderPrefab;
                 break;
             case "DirectionalLightPrefab":
                 createdGameObject = new PREFAB.DirectionalLightPrefab;
